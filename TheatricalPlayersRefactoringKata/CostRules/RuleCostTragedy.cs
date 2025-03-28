@@ -1,7 +1,7 @@
 namespace TheatricalPlayersRefactoringKata;
 
 
-public class RuleCostTragedy : IRuleCost
+public class RuleCosttragedy : IRuleCost
 {
     public override double PlayCost(double baseValue,int audience)
     {

@@ -1,5 +1,7 @@
 using System.Collections.Generic;
 using System;
+using System.Reflection;
+using System.Linq;
 
 namespace TheatricalPlayersRefactoringKata;
 
@@ -17,17 +19,36 @@ public class Performance
         this._audience = audience;
     }
 
-    public double PerformanceCredits(int audience){
-        
-        return 0;
+    public double PerformanceCredits(int audience,string playType){
+            string ruleName = $"RuleCredit{playType}"; // Exemplo: "RegraComedia"
+            int credits = 0;
+            Type? ruleType =  Assembly.GetExecutingAssembly()
+                                 .GetTypes()
+                                 .FirstOrDefault(t => t.Name.Equals(ruleName, StringComparison.OrdinalIgnoreCase));
+            if (ruleType == null)
+            {
+                //Caso  a peça não tenha um calculo especifico, o valor será o padrão(numero de linhas/10)
+                IRuleCredit regra = (IRuleCredit)Activator.CreateInstance(typeof(RuleCreditDefault));
+                credits+= regra.PlayCredtis(audience,playType);
+
+            }else{
+                IRuleCredit regra = (IRuleCredit)Activator.CreateInstance(ruleType)!;
+                if(this.PlayId=="history"){}
+                else
+                    credits += regra.PlayCredtis(audience,playType);
+            }
+
+            return credits;
     }
 
-    public double PerformanceCost(double baseValue){
+    public double PerformanceCost(double baseValue, string playType){
 
-            string ruleName = $"RuleCost{this.PlayId}"; // Exemplo: "RegraComedia"
+            string ruleName = $"RuleCost{playType.ToLower()}"; // Exemplo: "RegraComedia"
             double ammount = 0;
-            Type? ruleType = Type.GetType(ruleName);
-            if (ruleName == null)
+            Type? ruleType =  Assembly.GetExecutingAssembly()
+                                 .GetTypes()
+                                 .FirstOrDefault(t => t.Name.Equals(ruleName, StringComparison.OrdinalIgnoreCase));
+            if (ruleType == null)
             {
                 //Caso  a peça não tenha um calculo especifico, o valor será o padrão(numero de linhas/10)
                 IRuleCost regra = (IRuleCost)Activator.CreateInstance(typeof(RuleCostDefault));
@@ -35,13 +56,9 @@ public class Performance
 
             }else{
                 IRuleCost regra = (IRuleCost)Activator.CreateInstance(ruleType)!;
-                if(this.PlayId=="history"){}
-                else
-                    ammount += regra.PlayCost(baseValue,this.Audience);
+                ammount += regra.PlayCost(baseValue,this.Audience);
             }
-
-
-        return 0;
+            return ammount;
     }
 
 }
