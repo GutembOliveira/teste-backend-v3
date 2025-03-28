@@ -6,6 +6,10 @@ namespace TheatricalPlayersRefactoringKata;
 
 public class StatementPrinter
 {
+
+
+
+   
     public string Print(Invoice invoice, Dictionary<string, Play> plays)
     {
         var totalAmount = 0;
@@ -33,6 +37,12 @@ public class StatementPrinter
                     }
                     thisAmount += 300 * perf.Audience;
                     break;
+                case "history":
+                    if(perf.Audience>10){
+                        thisAmount += 10000 + 300 * (perf.Audience - 21);
+                    }
+                        break;
+
                 default:
                     throw new Exception("unknown type: " + play.Type);
             }

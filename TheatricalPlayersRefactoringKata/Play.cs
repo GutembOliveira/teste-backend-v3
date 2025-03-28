@@ -1,5 +1,5 @@
 namespace TheatricalPlayersRefactoringKata;
-
+using System;
 public class Play
 {
     private string _name;
@@ -15,4 +15,7 @@ public class Play
         this._lines = lines;
         this._type = type;
     }
+
+  
+
 }
