@@ -12,8 +12,8 @@ namespace TheatricalPlayersRefactoringKata
         {
             try
             {
-                string connectionString ="mongodb+srv://Gutemberg:Chernobyl371@cluster0.ur14plj.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0";
-
+                //colocar a conectionstring do banco
+                var connectionString = ""; 
                 return connectionString;
             }
             catch (Exception ex)
