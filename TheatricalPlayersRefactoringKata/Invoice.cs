@@ -27,7 +27,7 @@ public class Invoice
 
 
 
-    public string InvoiceCostText(List<Performance> Performances,Dictionary<string, Play> plays){
+    public void InvoiceCost(List<Performance> Performances,Dictionary<string, Play> plays){
         CultureInfo cultureInfo = new CultureInfo("en-US");
         double totalAmount = 0;
         double playAmmount = 0;
@@ -35,21 +35,14 @@ public class Invoice
         foreach(var perf in Performances){
             var play = plays.Where(x=>x.Key==perf.PlayId).FirstOrDefault().Value;
             var baseValue = play.Lines*10;
-            if(play.Type=="history"){
-            playAmmount=perf.PerformanceCost(baseValue,"comedy")+perf.PerformanceCost(baseValue,"tragedy");
-            totalAmount+=playAmmount;
-            }else{
             playAmmount=perf.PerformanceCost(baseValue,play.Type);
             totalAmount+=playAmmount;
-            }
-            invoiceText += String.Format(cultureInfo, "  {0}: {1:C} ({2} seats)\n", play.Name, Convert.ToDecimal(playAmmount / 100), perf.Audience);
         }
-
         this._totalCost = totalAmount;
-        return invoiceText;
+        //return totalAmount;
     }
 
-    public int InvoiceCredits(List<Performance> Performances,Dictionary<string, Play> plays){
+    public void InvoiceCredits(List<Performance> Performances,Dictionary<string, Play> plays){
         CultureInfo cultureInfo = new CultureInfo("en-US");
 
         int totalCredits = 0;
@@ -58,7 +51,7 @@ public class Invoice
             totalCredits+=perf.PerformanceCredits(perf.Audience,play.Type);
             }
         this._totalCredits = totalCredits;
-        return totalCredits;
+        //return totalCredits;
 
         }
 
