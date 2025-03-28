@@ -2,6 +2,10 @@ using System.Collections.Generic;
 using System;
 using System.Linq;
 using System.Globalization;
+using MongoDB.Bson;
+using MongoDB.Driver;
+
+
 namespace  TheatricalPlayersRefactoringKata;
 public class Invoice
 {
@@ -15,7 +19,6 @@ public class Invoice
     public double TotalCost { get => _totalCost; set => _totalCost = value; }
     public int TotalCretids { get => _totalCredits; set => _totalCredits = value; }
     public string InvoiceResume { get => invoiceResume; set => invoiceResume = value; }
-
     public Invoice(string customer, List<Performance> performance)
     {
         this._customer = customer;
@@ -58,5 +61,40 @@ public class Invoice
         return totalCredits;
 
         }
+
+
+    
+        public void SaveInvoice(Invoice invoice)
+        {
+             try
+            {
+                var collection = DbConfig.GetDatabase().GetCollection<BsonDocument>("INVOICES");
+                var invoiceDocument = new BsonDocument
+                {
+                    { "customer", _customer },
+                    { "PERFOMANCES", new BsonArray(_performances.Select(perf => new BsonDocument
+                        {
+                            { "playId", perf.PlayId },
+                            { "audience", perf.Audience },
+                            { "playCost", Math.Round(perf.PlayCost / 100, 2) },
+                            { "playCredits", perf.PlayCredtis }
+                        }))
+                    },
+                    { "totalAmount", Math.Round(_totalCost / 100, 2) },
+                    { "totalCredits", _totalCredits }
+                };
+
+                collection.InsertOne(invoiceDocument);
+                Console.WriteLine("Invoice salvo com sucesso no MongoDB.");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Erro ao salvar no MongoDB: " + ex.Message);
+            }
+        }
+
 }
+    
+
+
 

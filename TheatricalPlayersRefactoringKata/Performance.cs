@@ -9,7 +9,10 @@ public class Performance
 {
     private string _playId;
     private int _audience;
-
+    private double _playCost;
+    private int _playCredtis;
+    public double PlayCost { get => _playCost; set => _playCost = value; }
+    public int PlayCredtis { get => _playCredtis; set => _playCredtis = value; }
     public string PlayId { get => _playId; set => _playId = value; }
     public int Audience { get => _audience; set => _audience = value; }
 
@@ -35,7 +38,7 @@ public class Performance
                 IRuleCredit regra = (IRuleCredit)Activator.CreateInstance(ruleType);
                 credits += regra.PlayCredtis(audience,playType);
             }
-
+            this._playCredtis = credits;
             return credits;
     }
 
@@ -56,6 +59,7 @@ public class Performance
                 IRuleCost regra = (IRuleCost)Activator.CreateInstance(ruleType)!;
                 ammount += regra.PlayCost(baseValue,this.Audience);
             }
+            this._playCost = ammount;
             return ammount;
     }
 

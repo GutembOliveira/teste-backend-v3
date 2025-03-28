@@ -33,6 +33,7 @@ public class StatementPrinter
     public string Print(Invoice invoice, Dictionary<string, Play> plays)
     {
         var invoiceCustomer = this.GenerateCustomerInvoice(invoice, plays);
+        invoice.SaveInvoice(invoice);
         return invoiceCustomer.InvoiceResume;
     }
 
