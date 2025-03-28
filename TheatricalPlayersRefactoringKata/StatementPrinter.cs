@@ -1,6 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.Text;
+using System.Xml;
+using System.Xml.Linq;
+using System.Text.Json;
 
 namespace TheatricalPlayersRefactoringKata;
 
@@ -9,54 +13,73 @@ public class StatementPrinter
 
 
 
+    public Invoice GenerateCustomerInvoice(Invoice invoice, Dictionary<string, Play> plays){
+
+        CultureInfo cultureInfo = new CultureInfo("en-US");
+        var InvoiceText = string.Format("Statement for {0}\n", invoice.Customer);
+        InvoiceText += invoice.InvoiceCostText(invoice.Performances,plays);
+        InvoiceText += String.Format(cultureInfo, "Amount owed is {0:C}\n", Convert.ToDecimal(invoice.TotalCost/100));
+        InvoiceText += String.Format("You earned {0} credits\n", invoice.InvoiceCredits(invoice.Performances,plays));
+        invoice.InvoiceResume = InvoiceText;
+        return invoice;
+    }
+
+    // public string PrintXML(Invoice invoice, Dictionary<string, Play> plays)
+    // {
+    //     var result = string.Format("Statement for {0}\n", invoice.Customer);
+        
+    // }
    
     public string Print(Invoice invoice, Dictionary<string, Play> plays)
     {
-        var totalAmount = 0;
-        var volumeCredits = 0;
-        var result = string.Format("Statement for {0}\n", invoice.Customer);
-        CultureInfo cultureInfo = new CultureInfo("en-US");
-
-        foreach(var perf in invoice.Performances) 
-        {
-            var play = plays[perf.PlayId];
-            var lines = play.Lines;
-            if (lines < 1000) lines = 1000;
-            if (lines > 4000) lines = 4000;
-            var thisAmount = lines * 10;
-            switch (play.Type) 
-            {
-                case "tragedy":
-                    if (perf.Audience > 30) {
-                        thisAmount += 1000 * (perf.Audience - 30);
-                    }
-                    break;
-                case "comedy":
-                    if (perf.Audience > 20) {
-                        thisAmount += 10000 + 500 * (perf.Audience - 20);
-                    }
-                    thisAmount += 300 * perf.Audience;
-                    break;
-                case "history":
-                    if(perf.Audience>10){
-                        thisAmount += 10000 + 300 * (perf.Audience - 21);
-                    }
-                        break;
-
-                default:
-                    throw new Exception("unknown type: " + play.Type);
-            }
-            // add volume credits
-            volumeCredits += Math.Max(perf.Audience - 30, 0);
-            // add extra credit for every ten comedy attendees
-            if ("comedy" == play.Type) volumeCredits += (int)Math.Floor((decimal)perf.Audience / 5);
-
-            // print line for this order
-            result += String.Format(cultureInfo, "  {0}: {1:C} ({2} seats)\n", play.Name, Convert.ToDecimal(thisAmount / 100), perf.Audience);
-            totalAmount += thisAmount;
-        }
-        result += String.Format(cultureInfo, "Amount owed is {0:C}\n", Convert.ToDecimal(totalAmount / 100));
-        result += String.Format("You earned {0} credits\n", volumeCredits);
-        return result;
+        var invoiceCustomer = this.GenerateCustomerInvoice(invoice, plays);
+        return invoiceCustomer.InvoiceResume;
     }
+
+
+     public string PrintXml(Invoice invoice, Dictionary<string, Play> plays)
+    {
+        var invoiceCustomer = this.GenerateCustomerInvoice(invoice, plays);
+        var xml = new XElement("Invoice",
+            new XElement("Customer", invoiceCustomer.Customer),
+            new XElement("TotalAmount", invoiceCustomer.TotalCost),
+            new XElement("Credits", invoiceCustomer.TotalCretids),
+            new XElement("InvoiceResume",invoice.InvoiceResume)
+        );
+        return xml.ToString();
+    }
+
+
+    public string PrintCsv(Invoice invoice, Dictionary<string, Play> plays)
+{
+    var invoiceCustomer = this.GenerateCustomerInvoice(invoice, plays);
+
+    // Cabeçalhos do CSV
+    var csv = new StringBuilder();
+    csv.AppendLine("Customer,TotalAmount,Credits,InvoiceResume");
+
+    // Adiciona os valores da fatura
+    csv.AppendLine($"{invoiceCustomer.Customer},{invoiceCustomer.TotalCost},{invoiceCustomer.TotalCretids},{invoice.InvoiceResume}");
+
+    return csv.ToString();
+}
+
+
+public string PrintJson(Invoice invoice, Dictionary<string, Play> plays)
+{
+    var invoiceCustomer = this.GenerateCustomerInvoice(invoice, plays);
+
+    var json = new
+    {
+        Customer = invoiceCustomer.Customer,
+        TotalAmount = invoiceCustomer.TotalCost,
+        Credits = invoiceCustomer.TotalCretids,
+        InvoiceResume = invoice.InvoiceResume
+    };
+
+    return JsonSerializer.Serialize(json, new JsonSerializerOptions { WriteIndented = true });
+}
+
+
+
 }

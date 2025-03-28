@@ -1,0 +1,12 @@
+﻿<Invoice>
+  <Customer>BigCo</Customer>
+  <TotalAmount>165300</TotalAmount>
+  <Credits>47</Credits>
+  <InvoiceResume>Statement for BigCo
+  Hamlet: $650.00 (55 seats)
+  As You Like It: $547.00 (35 seats)
+  Othello: $456.00 (40 seats)
+Amount owed is $1,653.00
+You earned 47 credits
+</InvoiceResume>
+</Invoice>

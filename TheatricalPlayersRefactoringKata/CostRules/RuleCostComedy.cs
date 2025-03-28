@@ -8,9 +8,9 @@ public class RuleCostComedy : IRuleCost
                     var value = baseValue;
                     //se comédia
                     if (audience > 20) {
-                        value += 100.00 + 5.00 * (audience - 20);
+                        value += 10000 + 500 * (audience - 20);
                     }
-                    value += 3.00 * audience;
+                    value += 300 * audience;
                     return value;
     }
 }

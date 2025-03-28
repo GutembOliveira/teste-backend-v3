@@ -7,7 +7,7 @@ public class RuleCosttragedy : IRuleCost
     {
                 var value = baseValue; 
                 if (audience > 30) {
-                            value += 10.00 * (audience - 30);
+                            value += 1000   * (audience - 30);
                         }
                     return  value;
     }

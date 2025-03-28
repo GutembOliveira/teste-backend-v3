@@ -19,7 +19,7 @@ public class Performance
         this._audience = audience;
     }
 
-    public double PerformanceCredits(int audience,string playType){
+    public int PerformanceCredits(int audience,string playType){
             string ruleName = $"RuleCredit{playType}"; // Exemplo: "RegraComedia"
             int credits = 0;
             Type? ruleType =  Assembly.GetExecutingAssembly()
@@ -32,10 +32,8 @@ public class Performance
                 credits+= regra.PlayCredtis(audience,playType);
 
             }else{
-                IRuleCredit regra = (IRuleCredit)Activator.CreateInstance(ruleType)!;
-                if(this.PlayId=="history"){}
-                else
-                    credits += regra.PlayCredtis(audience,playType);
+                IRuleCredit regra = (IRuleCredit)Activator.CreateInstance(ruleType);
+                credits += regra.PlayCredtis(audience,playType);
             }
 
             return credits;

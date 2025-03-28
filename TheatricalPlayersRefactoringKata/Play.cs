@@ -12,6 +12,8 @@ public class Play
 
     public Play(string name, int lines, string type) {
         this._name = name;
+        if (lines < 1000) lines = 1000;
+        if (lines > 4000) lines = 4000;
         this._lines = lines;
         this._type = type;
     }
